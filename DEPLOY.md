@@ -42,19 +42,25 @@ ssh-copy-id -i ~/.ssh/arbuz_deploy.pub deploy@<server-ip>
 
 ```bash
 # На сервере, от имени пользователя deploy
-mkdir -p /opt/arbuz-bot-new
-git clone <repo-url> /opt/arbuz-bot-new
+git clone <repo-url> /opt/arbuz-bot
 ```
 
 ### .env файл на сервере
 
-Создать `/opt/arbuz-bot-new/.env` с токенами бота (DB-переменные при деплое придут из GitHub Secrets, но TOKEN и остальное нужно задать вручную один раз):
+Создать `/opt/arbuz-bot/.env` на основе `.env.example`. Все переменные, включая `DATABASE_URL`, задаются здесь один раз вручную:
 
 ```env
 TOKEN=<токен бота из Discord Developer Portal>
 GUILD_ID=<ID сервера Discord>
 CHANNEL_ID=<ID канала для объявлений>
+DATABASE_URL=postgresql://<user>:<password>@postgres:5432/<dbname>
 ```
+
+Хост в `DATABASE_URL` — `postgres` (имя сервиса из docker-compose, не `localhost`).
+
+> Если пароль содержит спецсимволы, закодируй их процентным кодированием:
+> `@` → `%40`, `#` → `%23`, `/` → `%2F`, пробел → `%20`
+> То же правило действует при сохранении `DATABASE_URL` в GitHub Secrets.
 
 ---
 
@@ -82,9 +88,8 @@ CHANNEL_ID=<ID канала для объявлений>
 **Вариант Б — скриптом**, если ID ролей уже известны (Discord → Settings → Advanced → Developer Mode → ПКМ на роль → Copy ID):
 
 ```bash
-cd /opt/arbuz-bot-new
-DB_USER=<значение> DB_NAME=<значение> \
-  ./scripts/seed-roles.sh <arbuz_role_id> <tykvenets_role_id>
+cd /opt/arbuz-bot
+./scripts/seed-roles.sh <arbuz_role_id> <tykvenets_role_id>
 ```
 
 Скрипт вставляет роли в БД и выводит итоговую таблицу для проверки. Безопасно запускать повторно — перезапишет существующие значения.
@@ -100,9 +105,8 @@ DB_USER=<значение> DB_NAME=<значение> \
 | `DEPLOY_HOST` | IP или hostname сервера |
 | `DEPLOY_USER` | Пользователь для SSH (например, `deploy`) |
 | `DEPLOY_KEY` | Приватный SSH-ключ (содержимое файла `arbuz_deploy`) |
-| `DB_USER` | Имя пользователя PostgreSQL |
-| `DB_PASSWORD` | Пароль PostgreSQL |
-| `DB_NAME` | Имя базы данных PostgreSQL |
+
+Все остальные переменные (в том числе `DATABASE_URL`) хранятся в `.env` на сервере и не передаются через Secrets.
 
 ---
 
@@ -111,10 +115,8 @@ DB_USER=<значение> DB_NAME=<значение> \
 На сервере, от имени пользователя `deploy`:
 
 ```bash
-cd /opt/arbuz-bot-new
-
-DB_USER=<значение> DB_PASSWORD=<значение> DB_NAME=<значение> \
-  docker compose up -d --build
+cd /opt/arbuz-bot
+docker compose up -d --build
 
 # Проверить что контейнеры запустились
 docker compose ps
