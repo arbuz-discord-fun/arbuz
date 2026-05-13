@@ -2,7 +2,7 @@ name: CD
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
             set -e
             cd /opt/arbuz-bot
             git fetch origin
-            git checkout main
-            git reset --hard origin/main
+            git checkout master
+            git reset --hard origin/master
             docker compose up -d --build
             docker compose ps
