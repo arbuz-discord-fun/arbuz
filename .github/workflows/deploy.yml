@@ -35,4 +35,5 @@ jobs:
             git fetch origin
             git checkout master
             git reset --hard origin/master
-            sg docker -c "docker compose up -d --build && docker compose ps"
+            docker compose up -d --build
+            docker compose ps
