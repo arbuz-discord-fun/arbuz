@@ -30,9 +30,9 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             set -e
+            git config --global --add safe.directory /opt/arbuz
             cd /opt/arbuz
             git fetch origin
             git checkout master
             git reset --hard origin/master
-            docker compose up -d --build
-            docker compose ps
+            sg docker -c "docker compose up -d --build && docker compose ps"

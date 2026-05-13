@@ -24,6 +24,8 @@ adduser deploy
 
 # Добавить в группу docker, чтобы мог запускать docker compose без sudo
 usermod -aG docker deploy
+# Изменение вступает в силу в новой SSH-сессии.
+# Проверить: ssh deploy@<server-ip> — и выполнить docker ps (должно работать без sudo)
 ```
 
 ### SSH-ключ для GitHub Actions
@@ -47,14 +49,20 @@ git clone <repo-url> /opt/arbuz
 
 ### .env файл на сервере
 
-Создать `/opt/arbuz/.env` на основе `.env.example`. Все переменные, включая `DATABASE_URL`, задаются здесь один раз вручную:
+Создать `/opt/arbuz/.env` на основе `.env.example`. Все переменные задаются здесь один раз вручную:
 
 ```env
 TOKEN=<токен бота из Discord Developer Portal>
 GUILD_ID=<ID сервера Discord>
 CHANNEL_ID=<ID канала для объявлений>
-DATABASE_URL=postgresql://<user>:<password>@postgres:5432/<dbname>
+
+DB_USER=<имя пользователя postgres>
+DB_PASSWORD=<пароль postgres>
+DB_NAME=<имя базы данных>
+DATABASE_URL=postgresql://<DB_USER>:<DB_PASSWORD>@postgres:5432/<DB_NAME>
 ```
+
+`DB_USER`, `DB_PASSWORD`, `DB_NAME` нужны для инициализации контейнера postgres. `DATABASE_URL` использует те же значения и нужен боту для подключения к БД.
 
 Хост в `DATABASE_URL` — `postgres` (имя сервиса из docker-compose, не `localhost`).
 
