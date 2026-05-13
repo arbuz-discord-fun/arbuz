@@ -6,10 +6,8 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 if [ -f "$SCRIPT_DIR/.env" ]; then
-  set -a
-  # shellcheck source=/dev/null
-  . "$SCRIPT_DIR/.env"
-  set +a
+  DB_USER="${DB_USER:-$(grep -m1 '^DB_USER=' "$SCRIPT_DIR/.env" | cut -d= -f2- | sed 's/[[:space:]]*#.*//' | tr -d '"'"'"' ')}"
+  DB_NAME="${DB_NAME:-$(grep -m1 '^DB_NAME=' "$SCRIPT_DIR/.env" | cut -d= -f2- | sed 's/[[:space:]]*#.*//' | tr -d '"'"'"' ')}"
 fi
 
 ARBUZ_ID="${1:?Укажи ID роли арбуза: ./scripts/seed-roles.sh <arbuz_id> <tykvenets_id>}"
