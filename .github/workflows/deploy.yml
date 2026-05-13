@@ -30,7 +30,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             set -e
-            cd /opt/arbuz-bot
+            cd /opt/arbuz
             git fetch origin
             git checkout master
             git reset --hard origin/master

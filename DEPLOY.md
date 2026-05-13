@@ -1,4 +1,4 @@
-# Деплой arbuz-bot
+# Деплой arbuz
 
 Бот запускается через Docker Compose (PostgreSQL + Node.js). Повторные деплои автоматизированы через GitHub Actions — пуш в `main` вызывает пересборку и перезапуск на сервере.
 
@@ -42,12 +42,12 @@ ssh-copy-id -i ~/.ssh/arbuz_deploy.pub deploy@<server-ip>
 
 ```bash
 # На сервере, от имени пользователя deploy
-git clone <repo-url> /opt/arbuz-bot
+git clone <repo-url> /opt/arbuz
 ```
 
 ### .env файл на сервере
 
-Создать `/opt/arbuz-bot/.env` на основе `.env.example`. Все переменные, включая `DATABASE_URL`, задаются здесь один раз вручную:
+Создать `/opt/arbuz/.env` на основе `.env.example`. Все переменные, включая `DATABASE_URL`, задаются здесь один раз вручную:
 
 ```env
 TOKEN=<токен бота из Discord Developer Portal>
@@ -88,7 +88,7 @@ DATABASE_URL=postgresql://<user>:<password>@postgres:5432/<dbname>
 **Вариант Б — скриптом**, если ID ролей уже известны (Discord → Settings → Advanced → Developer Mode → ПКМ на роль → Copy ID):
 
 ```bash
-cd /opt/arbuz-bot
+cd /opt/arbuz
 ./scripts/seed-roles.sh <arbuz_role_id> <tykvenets_role_id>
 ```
 
@@ -100,11 +100,11 @@ cd /opt/arbuz-bot
 
 В репозитории: **Settings → Secrets and variables → Actions → New repository secret**
 
-| Секрет | Описание |
-|---|---|
-| `DEPLOY_HOST` | IP или hostname сервера |
-| `DEPLOY_USER` | Пользователь для SSH (например, `deploy`) |
-| `DEPLOY_KEY` | Приватный SSH-ключ (содержимое файла `arbuz_deploy`) |
+| Секрет        | Описание                                             |
+| ------------- | ---------------------------------------------------- |
+| `DEPLOY_HOST` | IP или hostname сервера                              |
+| `DEPLOY_USER` | Пользователь для SSH (например, `deploy`)            |
+| `DEPLOY_KEY`  | Приватный SSH-ключ (содержимое файла `arbuz_deploy`) |
 
 Все остальные переменные (в том числе `DATABASE_URL`) хранятся в `.env` на сервере и не передаются через Secrets.
 
@@ -115,7 +115,7 @@ cd /opt/arbuz-bot
 На сервере, от имени пользователя `deploy`:
 
 ```bash
-cd /opt/arbuz-bot
+cd /opt/arbuz
 docker compose up -d --build
 
 # Проверить что контейнеры запустились
