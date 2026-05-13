@@ -4,6 +4,14 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+  set -a
+  # shellcheck source=/dev/null
+  source "$SCRIPT_DIR/.env"
+  set +a
+fi
+
 ARBUZ_ID="${1:?Укажи ID роли арбуза: ./scripts/seed-roles.sh <arbuz_id> <tykvenets_id>}"
 TYKVENETS_ID="${2:?Укажи ID роли тыквенца: ./scripts/seed-roles.sh <arbuz_id> <tykvenets_id>}"
 
