@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+drizzle/
+*.md
+.git/
+.gitignore
+docker-compose.yml
